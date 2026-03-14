@@ -1,0 +1,36 @@
+# Global
+.DS_Store
+Thumbs.db
+*.log
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.vscode/
+.idea/
+
+# Env files
+.env
+.env.*
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Laravel / PHP
+vendor/
+storage/*.key
+storage/pail/
+public/build/
+public/hot
+public/storage
+.phpunit.cache/
+phpunit.result.cache
+
+# OS/Editor
+.fleet/
+.nova/
+.zed/
