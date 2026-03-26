@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaLock, FaEnvelope, FaCheck, FaTimes, FaDumbbell } from 'react-icons/fa';
+import { FaUser, FaLock, FaEnvelope, FaCheck, FaTimes, FaBolt } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 
 const Auth = () => {
@@ -77,35 +77,36 @@ const Auth = () => {
     };
 
     return (
-        <section className="min-h-screen pt-24 pb-20 flex items-center justify-center px-6 relative z-10">
-            <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
+        <div className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
+            <div className="absolute inset-0 bg-grid opacity-10 pointer-events-none" />
 
             <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className="w-full max-w-md glass-card p-8 md:p-10 border-neonCyan/30 relative overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-md glass-morphism p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden border-neonCyan/20"
             >
-                <div className="text-center mb-8">
-                    <FaDumbbell className="text-4xl text-neonCyan mx-auto mb-4 animate-pulse-glow" />
-                    <h2 className="text-4xl font-display tracking-widest text-white">
-                        {isLogin ? 'ENTER THE GRID' : 'FORGE PROFILE'}
+                <div className="text-center mb-10">
+                    <div className="w-16 h-16 bg-gradient-to-br from-neonCyan to-neonPurple rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_20px_rgba(0,243,255,0.4)]">
+                        <FaBolt className="text-white text-3xl" />
+                    </div>
+                    <h2 className="text-4xl font-display tracking-tight text-white uppercase">
+                        {isLogin ? 'SYSTEM <span class="text-neonCyan">LOGIN</span>' : 'CREATE <span class="text-neonPink">PROFILE</span>'}
                     </h2>
-                    <p className="text-grayMeta text-sm font-body mt-2 uppercase tracking-widest">
-                        {isLogin ? 'Initialize Connection' : 'Generate Registration'}
+                    <p className="text-gray-500 text-[10px] font-bold mt-2 uppercase tracking-[0.3em]">
+                        {isLogin ? 'Authenticate to proceed' : 'Join the elite ranks'}
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5 relative z-10 flex flex-col">
-                    <AnimatePresence mode="popLayout">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <AnimatePresence mode="wait">
                         {!isLogin && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
                                 animate={{ opacity: 1, height: 'auto' }}
                                 exit={{ opacity: 0, height: 0 }}
-                                className="relative group overflow-hidden"
+                                className="relative"
                             >
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-grayMeta group-focus-within:text-neonPink transition-colors">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500">
                                     <FaUser />
                                 </div>
                                 <input
@@ -113,15 +114,15 @@ const Auth = () => {
                                     required={!isLogin}
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full bg-darkGray/60 border border-white/10 rounded-lg pl-12 pr-4 py-4 text-white font-body focus:outline-none focus:border-neonPink focus:bg-black/80 transition-all shadow-inner"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white font-body focus:outline-none focus:border-neonPink transition-all"
                                     placeholder="OPERATIVE NAME"
                                 />
                             </motion.div>
                         )}
                     </AnimatePresence>
 
-                    <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-grayMeta group-focus-within:text-neonCyan transition-colors">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500">
                             <FaEnvelope />
                         </div>
                         <input
@@ -129,13 +130,13 @@ const Auth = () => {
                             required
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            className="w-full bg-darkGray/60 border border-white/10 rounded-lg pl-12 pr-4 py-4 text-white font-body focus:outline-none focus:border-neonCyan focus:bg-black/80 transition-all shadow-inner"
-                            placeholder="COMMS CHANNEL (EMAIL)"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white font-body focus:outline-none focus:border-neonCyan transition-all"
+                            placeholder="EMAIL ADDRESS"
                         />
                     </div>
 
-                    <div className="relative group">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-grayMeta group-focus-within:text-neonPurple transition-colors">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500">
                             <FaLock />
                         </div>
                         <input
@@ -143,89 +144,74 @@ const Auth = () => {
                             required
                             value={formData.password}
                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                            className="w-full bg-darkGray/60 border border-white/10 rounded-lg pl-12 pr-4 py-4 text-white font-body focus:outline-none focus:border-neonPurple focus:bg-black/80 transition-all shadow-inner"
-                            placeholder="SECURITY CODE (PASSWORD)"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 text-white font-body focus:outline-none focus:border-neonPurple transition-all"
+                            placeholder="SECURITY CODE"
                         />
                     </div>
 
-                    <AnimatePresence mode="popLayout">
-                        {!isLogin && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="relative group overflow-hidden"
-                            >
-                                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-grayMeta group-focus-within:text-neonPink transition-colors">
-                                    <FaLock />
+                    {!isLogin && (
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500">
+                                <FaLock />
+                            </div>
+                            <input
+                                type="password"
+                                required={!isLogin}
+                                value={formData.confirmPassword}
+                                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-12 py-4 text-white font-body focus:outline-none focus:border-neonPink transition-all"
+                                placeholder="CONFIRM CODE"
+                            />
+                            {showConfirmStatus && (
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+                                    {passwordsMatch ? (
+                                        <FaCheck className="text-neonCyan" />
+                                    ) : (
+                                        <FaTimes className="text-neonPink" />
+                                    )}
                                 </div>
-                                <input
-                                    type="password"
-                                    required={!isLogin}
-                                    value={formData.confirmPassword}
-                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                    className="w-full bg-darkGray/60 border border-white/10 rounded-lg pl-12 pr-12 py-4 text-white font-body focus:outline-none focus:border-neonPink focus:bg-black/80 transition-all shadow-inner"
-                                    placeholder="CONFIRM SECURITY CODE"
-                                />
+                            )}
+                        </div>
+                    )}
 
-                                {/* Advanced Password Match Animation logic */}
-                                {showConfirmStatus && (
-                                    <motion.div
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        animate={
-                                            passwordsMatch
-                                                ? { scale: 1, opacity: 1, rotate: [0, 15, -15, 0] }
-                                                : { scale: 1, opacity: 1, x: [0, -5, 5, -5, 5, 0] }
-                                        }
-                                        className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none"
-                                    >
-                                        {passwordsMatch ? (
-                                            <FaCheck className="text-neonCyan text-xl drop-shadow-[0_0_8px_rgba(0,243,255,0.8)]" />
-                                        ) : (
-                                            <FaTimes className="text-neonPink text-xl drop-shadow-[0_0_8px_rgba(255,0,127,0.8)]" />
-                                        )}
-                                    </motion.div>
-                                )}
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                    <button
                         type="submit"
                         disabled={isLoading}
-                        className={`w-full py-4 mt-4 rounded-lg font-display text-xl tracking-widest uppercase transition-all duration-300 ${isLogin ? 'bg-neonCyan text-black hover:shadow-[0_0_20px_rgba(0,243,255,0.6)]' : 'bg-neonPink text-black hover:shadow-[0_0_20px_rgba(255,0,127,0.6)]'}`}
+                        className={`w-full py-4 mt-6 rounded-2xl font-display text-xl tracking-widest uppercase transition-all duration-300 shadow-xl ${isLogin ? 'bg-neonCyan text-black hover:bg-white' : 'bg-neonPink text-black hover:bg-white'}`}
                     >
-                        {isLoading ? 'Processing...' : (isLogin ? 'Authenticate' : 'Initialize Profile')}
-                    </motion.button>
+                        {isLoading ? 'SYNCING...' : (isLogin ? 'AUTHENTICATE' : 'INITIALIZE')}
+                    </button>
                 </form>
 
                 {error && (
-                    <div className="mt-4 text-center text-neonPink text-sm font-body tracking-wide">
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="mt-4 text-center text-neonPink text-[10px] font-bold uppercase tracking-widest"
+                    >
                         {error}
-                    </div>
+                    </motion.div>
                 )}
 
-                <div className="mt-6 flex flex-col items-center gap-4 relative z-10">
+                <div className="mt-8 flex flex-col items-center gap-4">
                     <button
                         onClick={toggleMode}
-                        className="text-grayMeta text-sm font-body uppercase tracking-widest hover:text-white transition-colors underline decoration-white/20 underline-offset-4"
+                        className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em] hover:text-white transition-colors"
                     >
-                        {isLogin ? "Need access? Request profile." : "Already an operative? Access system."}
+                        {isLogin ? "Need a profile? Register" : "Already registered? Login"}
                     </button>
 
-                    <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    <div className="w-full h-px bg-white/5" />
 
                     <button
                         onClick={handleGuest}
-                        className="text-neonCyan/70 hover:text-neonCyan text-sm font-body uppercase tracking-widest transition-colors flex items-center gap-2"
+                        className="text-neonCyan/60 hover:text-neonCyan text-[10px] font-bold uppercase tracking-[0.2em] transition-colors flex items-center gap-2"
                     >
-                        <FaUser className="text-xs" /> Continue Without Profile
+                        <FaUser className="text-[8px]" /> Continue as Guest
                     </button>
                 </div>
             </motion.div>
-        </section>
+        </div>
     );
 };
 

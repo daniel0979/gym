@@ -1,106 +1,112 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FaBolt, FaUserCircle, FaSignOutAlt } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { FaBolt, FaUserCircle, FaSignOutAlt, FaShieldAlt } from 'react-icons/fa';
 
 const Navbar = () => {
+    const { user, logout } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
-    const { user, logout } = useAuth();
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const baseLinks = [
-        { path: '/', label: 'Home' },
-        { path: '/classes', label: 'Classes' },
-        { path: '/plans', label: 'Plans' },
-        { path: '/about', label: 'About' },
-        { path: '/location', label: 'HQ' },
+        { name: 'Home', path: '/' },
+        { name: 'Classes', path: '/classes' },
+        { name: 'Plans', path: '/plans' },
+        { name: 'Location', path: '/location' },
     ];
 
     const privateLinks = user && !user.isGuest ? [
-        { path: '/dashboard', label: 'Metrics' },
-        { path: '/trainers', label: 'Mentors' },
-        { path: '/video', label: 'Cyber Cardio' },
-        { path: '/chat', label: 'Comms' }
+        { name: 'Metrics', path: '/dashboard' },
+        { name: 'Mentors', path: '/trainers' },
+        { name: 'Cyber Cardio', path: '/video' },
+        { name: 'Comms', path: '/chat' }
     ] : [
-        { path: '/contact', label: 'Comms' }
+        { name: 'Comms', path: '/contact' }
     ];
 
     const navLinks = [...baseLinks, ...privateLinks];
 
-    const handleLogout = () => {
-        logout();
-        navigate('/');
-    };
-
     return (
-        <nav className="fixed w-full z-50 top-0 left-0 bg-trueBlack/70 backdrop-blur-md border-b border-white/5">
-            <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                <Link to="/">
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8 }}
-                        className="flex items-center gap-2"
-                    >
-                        <FaBolt className="text-neonCyan text-3xl animate-pulse-glow" />
-                        <span className="font-display text-2xl md:text-3xl tracking-widest text-white mt-1">POWER HOUSE <span className="text-neonPink">GYM</span></span>
-                    </motion.div>
+        <motion.nav
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 py-4 ${
+                scrolled ? 'bg-black/60 backdrop-blur-xl border-b border-white/5' : 'bg-transparent'
+            }`}
+        >
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
+                {/* Logo */}
+                <Link to="/" className="flex items-center gap-3 group">
+                    <div className="w-10 h-10 bg-gradient-to-br from-neonCyan to-neonPurple rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.4)] group-hover:scale-110 transition-transform">
+                        <FaBolt className="text-white text-xl" />
+                    </div>
+                    <span className="text-2xl font-display tracking-widest uppercase hidden sm:block">
+                        POWER<span className="text-neonCyan">HOUSE</span>
+                    </span>
                 </Link>
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="hidden lg:flex items-center gap-8 font-body text-sm font-semibold tracking-widest uppercase text-grayMeta mt-1"
-                >
+
+                {/* Desktop Links */}
+                <div className="hidden lg:flex items-center gap-6">
                     {navLinks.map((link) => (
                         <Link
                             key={link.path}
                             to={link.path}
-                            className={`transition-colors ${location.pathname === link.path ? 'text-neonCyan' : 'hover:text-neonPurple'}`}
+                            className={`relative text-[10px] font-display uppercase tracking-[0.2em] transition-colors ${
+                                location.pathname === link.path ? 'text-neonCyan' : 'text-gray-400 hover:text-white'
+                            }`}
                         >
-                            {link.label}
+                            {link.name}
+                            {location.pathname === link.path && (
+                                <motion.div
+                                    layoutId="navUnderline"
+                                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-neonCyan shadow-[0_0_8px_rgba(0,243,255,1)]"
+                                />
+                            )}
                         </Link>
                     ))}
+                </div>
 
-                    <div className="h-4 w-px bg-white/20 mx-2" />
-
+                {/* Auth Actions */}
+                <div className="flex items-center gap-4">
                     {user ? (
                         <div className="flex items-center gap-4">
-                            <motion.div
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="flex items-center gap-2 text-white"
-                            >
-                                <FaUserCircle className={user.isGuest ? "text-grayMeta" : "text-neonCyan"} />
-                                <span className="font-display tracking-widest">
-                                    WELCOME, <span className={user.isGuest ? "text-grayMeta" : "text-neonPink"}>{user.name}</span>
+                            <div className="hidden md:flex flex-col items-end">
+                                <span className="text-[10px] font-bold text-white uppercase tracking-widest">{user.name}</span>
+                                <span className="text-[8px] font-bold text-neonPink uppercase tracking-widest">
+                                    {user.isGuest ? 'Guest Operative' : 'Elite Member'}
                                 </span>
-                            </motion.div>
-                            {!user.isGuest && (
-                                <Link to="/admin" className="text-neonCyan hover:text-white transition-colors text-xs font-display tracking-widest uppercase border border-neonCyan/30 hover:border-neonCyan px-2 py-1 rounded">
-                                    ADMIN
+                            </div>
+                            
+                            {user && !user.isGuest && (
+                                <Link to="/admin" className="hidden md:flex w-10 h-10 rounded-xl bg-white/5 border border-white/10 items-center justify-center text-neonCyan hover:bg-neonCyan/10 transition-all">
+                                    <FaShieldAlt />
                                 </Link>
                             )}
+
                             <button
-                                onClick={handleLogout}
-                                className="text-grayMeta hover:text-red-400 transition-colors flex items-center gap-1"
+                                onClick={() => { logout(); navigate('/'); }}
+                                className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-neonPink hover:border-neonPink/30 transition-all"
                                 title="Disconnect"
                             >
                                 <FaSignOutAlt />
                             </button>
                         </div>
                     ) : (
-                        <Link
-                            to="/auth"
-                            className="btn-neon !px-6 !py-2 !text-sm flex items-center gap-2"
-                        >
-                            <span className="btn-neon-text hover:text-transparent">JOIN NOW</span>
+                        <Link to="/auth" className="btn-neon !px-6 !py-2 !text-sm">
+                            <span className="btn-neon-text">Join Now</span>
                         </Link>
                     )}
-                </motion.div>
+                </div>
             </div>
-        </nav>
+        </motion.nav>
     );
 };
 
